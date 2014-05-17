@@ -1,5 +1,6 @@
 
-var d3 = require("d3")
+var _ = require("underscore")
+  , d3 = require("d3")
   , output = require("./lib/outputSVG")
   , convert = require("./lib/convertImage")
   , path = require("path")
@@ -9,13 +10,21 @@ var d3 = require("d3")
   ;
 
 var padding = 10,
-    width = 960,
-    height = 500;
+    width = 600,
+    height = 900;
 
-var circleA = shape.circle([200,300], 120, 10);
 var circleB = shape.circle([270,320], 170, 14);
-var circleC = shape.circle([670,250], 230, 31);
-var points = circleA.concat(circleB).concat(circleC);
+var circleC = shape.circle([670,250], 430, 31);
+var circleD = shape.circle([170,50], 530, 31);
+var circleE = shape.circle([900,450], 630, 41);
+var circleF = shape.circle([1000,250], 330, 52);
+var circleG = shape.circle([800,250], 130, 152);
+var points = circleB
+             .concat(circleC)
+             .concat(circleD)
+             .concat(circleE)
+             .concat(circleF)
+             .concat(circleG);
 
 // var points = [
 //   [290, 300],
@@ -23,27 +32,21 @@ var points = circleA.concat(circleB).concat(circleC);
 //   [770, 150]
 // ];
 
-// var xDist = 11
-//   , yDist = 33
-//   , i
-//   ;
+var xDist = 11
+  , yDist = 33
+  , i
+  ;
 
-// for(i = 1; i < 100; i+= 1){
+for(i = 1; i < 1200; i+= 1){
 
-//   var x = (i * xDist) % width
-//     , y = Math.floor((i * xDist)/width) * yDist
-//     ;
+  var x = (i * xDist) % width
+    , y = Math.floor((i * xDist)/width) * yDist
+    ;
 
-//   x = (Math.random() * 10) + x;
+  x = (Math.random() * 10) + x;
 
-//   if(y > height - padding || y < padding || x > width - padding || x < padding){
-//     // console.log("baddd")
-//   }
-//   else{
-//     points.push([x,y]);
-//   }
-
-// }
+  points.push([x,y]);
+}
 
 
 // var i;
@@ -56,6 +59,21 @@ var points = circleA.concat(circleB).concat(circleC);
 //   points.push([x,y]);
 
 // }
+
+function removeBadPoints(points){
+  return _.filter(points, function(point){
+    var x = point[0]
+      , y = point[1]
+      ;
+    return y < height - padding && y > padding && x < width - padding && x > padding;
+  });
+}
+
+points = removeBadPoints(points);
+
+
+// OUTPUT STUFF -------------------------------------------
+
 
 var voronoi = d3.geom.voronoi()
     .clipExtent([[padding, padding], [width - padding, height - padding]]);
@@ -71,9 +89,9 @@ var polygons = voronoi(points);
 svg.selectAll("path")
     .data(polygons)
   .enter().append("path")
-    .style("fill", function(d, i) { return color(i); })
-    // .attr("fill", "#000")
-    .attr("stroke", "#fff")
+    // .style("fill", function(d, i) { return color(i); })
+    .attr("fill", "#fff")
+    .attr("stroke", "#ff0000")
     .attr("stroke-width", 2)
     .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
 
