@@ -13,18 +13,32 @@ var padding = 10,
     width = 600,
     height = 900;
 
-var circleB = shape.circle([270,320], 170, 14);
-var circleC = shape.circle([670,250], 430, 31);
-var circleD = shape.circle([170,50], 530, 31);
-var circleE = shape.circle([900,450], 630, 41);
-var circleF = shape.circle([1000,250], 330, 52);
-var circleG = shape.circle([800,250], 130, 152);
-var points = circleB
-             .concat(circleC)
-             .concat(circleD)
-             .concat(circleE)
-             .concat(circleF)
-             .concat(circleG);
+var points = [];
+
+// var circleB = shape.circle([270,320], 170, 14);
+// var circleC = shape.circle([670,250], 430, 31);
+// var circleD = shape.circle([170,50], 530, 31);
+// var circleE = shape.circle([900,450], 630, 41);
+// var circleF = shape.circle([1000,250], 330, 52);
+// var circleG = shape.circle([800,250], 130, 152);
+// var points = circleB
+//              .concat(circleC)
+//              .concat(circleD)
+//              .concat(circleE)
+//              .concat(circleF)
+//              .concat(circleG);
+
+
+for(var i = 0; i < _.random(2,10); i += 1){
+
+  var center = [_.random(-width, width*2),_.random(-height, height*2)]
+    , radius = _.random(20, 600)
+    , space = _.random(10, 140)
+    , circle = shape.circle(center, radius, space)
+    ;
+
+  points = points.concat(circle)
+}
 
 // var points = [
 //   [290, 300],
@@ -32,15 +46,15 @@ var points = circleB
 //   [770, 150]
 // ];
 
-var xDist = 11
-  , yDist = 33
+var xDist = _.random(18,161)
+  , yDist = _.random(21,161)
   , i
   ;
 
-for(i = 1; i < 1200; i+= 1){
+for(i = 1; i < _.random(300, 900); i+= 1){
 
   var x = (i * xDist) % width
-    , y = Math.floor((i * xDist)/width) * yDist
+    , y = height - Math.floor((i * xDist)/width) * yDist
     ;
 
   x = (Math.random() * 10) + x;
@@ -50,7 +64,7 @@ for(i = 1; i < 1200; i+= 1){
 
 
 // var i;
-// for(i=0; i < 4; i+=1){
+// for(i=0; i < 400; i+=1){
 
 //   var x = (Math.random() * width - 2 * padding) + padding
 //     , y = (Math.random() * height - 2 * padding) + padding
@@ -89,9 +103,17 @@ var polygons = voronoi(points);
 svg.selectAll("path")
     .data(polygons)
   .enter().append("path")
-    // .style("fill", function(d, i) { return color(i); })
-    .attr("fill", "#fff")
-    .attr("stroke", "#ff0000")
+    // .style("fill", function(d, i) {
+    //   return color(i);
+    //   var polygon = d3.geom.polygon(d)
+    //     , area = polygon.area(d)
+    //     , c = color(area)
+    //     , control = d3.rgb(c)
+    //     ;
+    //   return area > 1000 ? control : control.brighter(4);
+    // })
+    .attr("fill", "#111")
+    .attr("stroke", "#eee")
     .attr("stroke-width", 2)
     .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
 
