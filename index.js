@@ -29,10 +29,10 @@ var points = [];
 //              .concat(circleG);
 
 
-for(var i = 0; i < _.random(2,10); i += 1){
+for(var i = 0; i < _.random(3,9); i += 1){
 
   var center = [_.random(-width, width*2),_.random(-height, height*2)]
-    , radius = _.random(20, 600)
+    , radius = _.random(20, 900)
     , space = _.random(10, 140)
     , circle = shape.circle(center, radius, space)
     ;
@@ -112,7 +112,7 @@ svg.selectAll("path")
     //     ;
     //   return area > 1000 ? control : control.brighter(4);
     // })
-    .attr("fill", "#111")
+    .attr("fill", "#111ff7")
     .attr("stroke", "#eee")
     .attr("stroke-width", 2)
     .attr("d", function(d) { return "M" + d.join("L") + "Z"; });
