@@ -1,10 +1,11 @@
 
 var d3 = require("d3")
-  , output = require("./lib/outputSVG.js")
+  , output = require("./lib/outputSVG")
+  , convert = require("./lib/convertImage")
   , path = require("path")
   , outputDir = path.join(__dirname, "output")
   , g2d = require("./lib/2dHelpers")
-  , shape = require("./lib/shapeHelpers.js")
+  , shape = require("./lib/shapeHelpers")
   ;
 
 var padding = 10,
@@ -13,7 +14,7 @@ var padding = 10,
 
 var circleA = shape.circle([200,300], 120, 10);
 var circleB = shape.circle([270,320], 170, 14);
-var circleC = shape.circle([370,250], 230, 30);
+var circleC = shape.circle([670,250], 230, 31);
 var points = circleA.concat(circleB).concat(circleC);
 
 // var points = [
@@ -59,7 +60,7 @@ var points = circleA.concat(circleB).concat(circleC);
 var voronoi = d3.geom.voronoi()
     .clipExtent([[padding, padding], [width - padding, height - padding]]);
 
-var color = d3.scale.category10();
+var color = d3.scale.category20b();
 
 var svg = d3.select("body").append("svg")
     .attr("width", width)
@@ -88,4 +89,13 @@ var txt = d3.select("body").html();
 
 // console.log(txt)
 
-output(txt, outputDir);
+output(txt, outputDir, function(err, file){
+  if(err){
+    console.log(err);
+    return;
+  }
+  console.log("created:", file);
+  convert(file, function(err, jpg){
+    console.log("created:", jpg)
+  })
+});
