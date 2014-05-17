@@ -10,8 +10,8 @@ var _ = require("underscore")
   ;
 
 var padding = 10,
-    width = 600,
-    height = 900;
+    width = 1000,
+    height = 1000;
 
 var points = [];
 
@@ -46,12 +46,12 @@ for(var i = 0; i < _.random(3,9); i += 1){
 //   [770, 150]
 // ];
 
-var xDist = _.random(18,161)
+var xDist = _.random(8,161)
   , yDist = _.random(21,161)
   , i
   ;
 
-for(i = 1; i < _.random(300, 900); i+= 1){
+for(i = 1; i < _.random(200, 900); i+= 1){
 
   var x = (i * xDist) % width
     , y = height - Math.floor((i * xDist)/width) * yDist
