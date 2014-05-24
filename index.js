@@ -29,11 +29,11 @@ var points = [];
 //              .concat(circleG);
 
 
-for(var i = 0; i < _.random(3,9); i += 1){
+for(var i = 0; i < _.random(1,19); i += 1){
 
   var center = [_.random(-width, width*2),_.random(-height, height*2)]
-    , radius = _.random(20, 900)
-    , space = _.random(10, 140)
+    , radius = _.random(20, 2000)
+    , space = _.random(10, 290)
     , circle = shape.circle(center, radius, space)
     ;
 
@@ -46,18 +46,20 @@ for(var i = 0; i < _.random(3,9); i += 1){
 //   [770, 150]
 // ];
 
-var xDist = _.random(8,161)
-  , yDist = _.random(21,161)
+var xDist = _.random(8,361)
+  , yDist = _.random(21,461)
   , i
   ;
 
-for(i = 1; i < _.random(200, 900); i+= 1){
+for(i = 1; i < _.random(200, 1200); i+= 1){
 
   var x = (i * xDist) % width
     , y = height - Math.floor((i * xDist)/width) * yDist
     ;
 
-  x = (Math.random() * 10) + x;
+  // wiggle
+  x = (Math.random() * 5) + x;
+  y = (Math.random() * 5) + y;
 
   points.push([x,y]);
 }
