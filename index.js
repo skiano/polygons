@@ -10,8 +10,8 @@ var _ = require("underscore")
   ;
 
 var padding = 10,
-    width = 1000,
-    height = 1000;
+    width = 800,
+    height = 1200;
 
 var points = [];
 
