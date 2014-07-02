@@ -1,12 +1,12 @@
 
 var _ = require("underscore")
   , d3 = require("d3")
-  , output = require("./lib/outputSVG")
-  , convert = require("./lib/convertImage")
+  , output = require("./lib/utils/outputSVG")
+  , convert = require("./lib/utils/convertImage")
   , path = require("path")
   , outputDir = path.join(__dirname, "output")
-  , g2d = require("./lib/2dHelpers")
-  , shape = require("./lib/shapeHelpers")
+  , g2d = require("./lib/utils/2dHelpers")
+  , shape = require("./lib/shapes/")
   ;
 
 var padding = 10,
@@ -131,13 +131,13 @@ var txt = d3.select("body").html();
 
 // console.log(txt)
 
-output(txt, outputDir, function(err, file){
-  if(err){
-    console.log(err);
-    return;
-  }
-  console.log("created:", file);
-  convert(file, function(err, jpg){
-    console.log("created:", jpg)
-  })
-});
+// output(txt, outputDir, function(err, file){
+//   if(err){
+//     console.log(err);
+//     return;
+//   }
+//   console.log("created:", file);
+//   convert(file, function(err, jpg){
+//     console.log("created:", jpg)
+//   })
+// });
