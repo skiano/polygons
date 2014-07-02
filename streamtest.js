@@ -21,11 +21,13 @@ Counter.prototype._read = function() {
   }
 };
 
+util.inherits(myWriter, Writable);
+
 function myWriter () {
   Writable.call(this, { objectMode : true });
 }
 
-util.inherits(myWriter, Writable);
+
 
 myWriter.prototype._write = function (data, encoding, done) {
   console.log(data);
