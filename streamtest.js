@@ -6,6 +6,7 @@ var util = require('util');
 
 var filterStream = require("./lib/utils/streamHelpers").filterStream;
 var joinStream = require("./lib/utils/streamHelpers").joinStream;
+var forStream = require("./lib/utils/streamHelpers").forStream;
 
 // Test Reader
 
@@ -35,7 +36,7 @@ function Logger () {
 }
 
 Logger.prototype._write = function (data, encoding, done) {
-  console.log(data);
+  console.log("->",data);
   done();
 };
 
@@ -64,13 +65,17 @@ Skipper.prototype._transform = function(data, encoding, done){
 
 
 
-var c = new Counter(5)
-  , c2 = new Counter(20)
+var c1 = new Counter(12)
+  , c2 = new Counter(6)
   , w = new Logger()
   , s = new Skipper(2,"!")
   , s2 = new Skipper(3,"-")
   , even = filterStream(function(n){return n%2 === 0;})
   , threes = filterStream(function(n){return n%3 === 0;})
+  , testFor = forStream(function(i){
+      console.log("for stream", i)
+      return i;
+    }, 30, 33);
   ;
 
 
@@ -85,7 +90,17 @@ var c = new Counter(5)
 
 // c2.pipe(joinStream([even,threes])).pipe(w);
 
-joinStream(c2, [even,threes]).pipe(w)
+// joinStream([testFor, c2], [threes]).pipe(w)
+
+
+
+
+testFor.pipe(filterStream(function(n){return n%3 === 0;})).pipe(w)
+c2.pipe(filterStream(function(n){return n%3 === 0;})).pipe(w)
+
+
+// testFor.pipe(threes).pipe(w)
+
 
 
 
