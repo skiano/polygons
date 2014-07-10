@@ -3,6 +3,10 @@ var Writable = require('stream').Writable;
 var Transform = require('stream').Transform;
 var util = require('util');
 
+
+var filterStream = require("./lib/utils/streamHelpers").filterStream;
+var joinStream = require("./lib/utils/streamHelpers").joinStream;
+
 // Test Reader
 
 util.inherits(Counter, Readable);
@@ -17,6 +21,7 @@ Counter.prototype._read = function() {
   var i = this._index++
     , v = (i <= this._max) ? i : null;
     ;
+  console.log("reader", i)
   this.push(v);
 };
 
@@ -57,39 +62,15 @@ Skipper.prototype._transform = function(data, encoding, done){
 
 // Test Filter
 
-// util.inherits(Skipper, Transform);
-
-// function FilterStream(filter) {
-//   Transform.call(this, { objectMode : true });
-//   this.filter = filter;
-// }
-
-// Skipper.prototype._transform = function(data, encoding, done){
-//   var self = this;
-//   if(this.filter(data)){
-//     self.push(number);  
-//   }
-//   done();
-// }
-
-function filterStream(filter){
-  var stream = new Transform({ objectMode : true });
-  stream._transform = function(data, encoding, done){
-    if(filter(data)){
-      this.push(data);  
-    }
-    done();
-  };
-  return stream;
-}
 
 
 var c = new Counter(5)
-  , c2 = new Counter(19)
+  , c2 = new Counter(20)
   , w = new Logger()
   , s = new Skipper(2,"!")
   , s2 = new Skipper(3,"-")
   , even = filterStream(function(n){return n%2 === 0;})
+  , threes = filterStream(function(n){return n%3 === 0;})
   ;
 
 
@@ -98,6 +79,13 @@ var c = new Counter(5)
 
 // c2.pipe(s).pipe(s2).pipe(w)
 
-c2.pipe(even).pipe(w)
+// c2.pipe(even).pipe(w)
+
+// c2.pipe(threes).pipe(w)
+
+// c2.pipe(joinStream([even,threes])).pipe(w);
+
+joinStream(c2, [even,threes]).pipe(w)
+
 
 
