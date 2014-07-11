@@ -8,6 +8,8 @@ var circle = require("./lib/shapes/circle");
 var filterStream = require("./lib/utils/streamHelpers").filterStream;
 var joinStream = require("./lib/utils/streamHelpers").joinStream;
 var forStream = require("./lib/utils/streamHelpers").forStream;
+var collectStream = require("./lib/utils/streamHelpers").collectStream;
+var logStream = require("./lib/utils/streamHelpers").logStream;
 
 // Test Reader
 
@@ -83,9 +85,21 @@ var c1 = new Counter(12)
 var circleA = circle([10,10], 18);
 var circleB = circle([20,10], 18);
 
+
+var points = collectStream();
+
 circleA.outlineStream()
   .pipe(circleB.clipStream())
-  .pipe(w)
+  .pipe(logStream("A clipped by b"))
+  .pipe(points);
+
+circleB.outlineStream()
+  .pipe(logStream("b outline"))
+  .pipe(points);
+
+points.on("finish", function(){
+  console.log(this.data)
+})
 
 
 // c.pipe(s).pipe(w);
