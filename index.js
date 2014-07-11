@@ -8,41 +8,70 @@ var _ = require("underscore")
   , g2d = require("./lib/utils/2dHelpers")
   , frame = require("./lib/frame")
   , circle = require("./lib/shapes/circle")
-  , collectStream =  require("./lib/utils/streamHelpers").collectStream;
+  , collectStream = require("./lib/utils/streamHelpers").collectStream
+  , eachStream = require("./lib/utils/streamHelpers").eachStream
+  , logStream = require("./lib/utils/streamHelpers").logStream
   ;
 
-var picture = frame(230, 230, 0); // 0 margin
 
-var circleA = circle([115,115], 90);
-var circleA2 = circle([115,115], 100);
-var circleB = circle([100,120], 60);
-var circleC = circle([60,125], 40);
-var circleD = circle([130,55], 100);
-var circleE = circle([200,115], 120);
+function randRange(start, end){
+  if(!end){
+    end = start
+    start = 0;
+  }
+  return Math.floor(Math.random()*(end-start)) + start;
+}
+
+var rotateAngle = randRange(-100,100);
+var rotateAngle2 = randRange(-100,100);
+
+var picture = frame(430, 630, 10); // 0 margin
+
+// var circleA = circle([115,115], 90);
+// var circleA2 = circle([115,115], 100);
+// var circleB = circle([100,120], 60);
+// var circleC = circle([60,125], 40);
+// var circleD = circle([130,55], 100);
+// var circleE = circle([200,115], 120);
 var points = collectStream();
 
-var overCircle = circle([130,130], 60);
+var overCircle = circle([215,200], randRange(100,160));
+var overCircle2 = circle([randRange(165,245),randRange(100,300)], randRange(130,200));
 
-for(var i = 1; i < 150; i+=1){
+for(var i = 1; i < randRange(10,100); i+=1){
 
-  circle([133 - i*10, 145], 160).outlineStream(6)
+  var c = circle([215, randRange(-300,100) + i*30 + randRange(-25,25)], randRange(300,310));
+
+  var rotate = eachStream(function(dot){
+    return g2d.rotate(dot, rotateAngle, [230, 315]);
+  });
+  var rotate2 = eachStream(function(dot){
+    return g2d.rotate(dot, rotateAngle2, [230, 315]);
+  });
+
+  c.outlineStream(randRange(10,20))
     .pipe(overCircle.clipStream())
-    .pipe(circleC.punchStream())
+    .pipe(rotate)
+    .pipe(points);
+
+  c.outlineStream(randRange(4,15))
+    .pipe(overCircle2.punchStream())
+    .pipe(rotate2)
     .pipe(points);
 }
 
 
-circleA.outlineStream(20)
-  .pipe(points);
+// circleA.outlineStream(20)
+//   .pipe(points);
 
-circleA2.outlineStream(27)
-  .pipe(points);
+// circleA2.outlineStream(27)
+//   .pipe(points);
 
-for(var i = 1; i < 10; i+=1){
-  circle([145, -190 + i*12], 190).outlineStream(12)
-    .pipe(circleA.punchStream())
-    .pipe(points);
-}
+// for(var i = 1; i < 10; i+=1){
+//   circle([145, -190 + i*12], 190).outlineStream(12)
+//     .pipe(circleA.punchStream())
+//     .pipe(points);
+// }
 
 
 // circleC.outlineStream()
