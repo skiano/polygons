@@ -14,68 +14,90 @@ var _ = require("underscore")
 var picture = frame(230, 230, 0); // 0 margin
 
 var circleA = circle([115,115], 90);
+var circleA2 = circle([115,115], 100);
 var circleB = circle([100,120], 60);
 var circleC = circle([60,125], 40);
 var circleD = circle([130,55], 100);
 var circleE = circle([200,115], 120);
 var points = collectStream();
 
-circleA.outlineStream()
-  .pipe(circleB.clipStream())
-  .pipe(points);
+var overCircle = circle([130,130], 60);
 
-circleC.outlineStream()
-  .pipe(circleA.clipStream())
-  .pipe(circleB.clipStream())
-  .pipe(points);
+for(var i = 1; i < 150; i+=1){
 
-circleB.outlineStream()
-  .pipe(circleA.clipStream())
-  .pipe(points);
-
-circleA.outlineStream()
-  .pipe(points);
-
-circleD.outlineStream()
-  .pipe(circleA.punchStream())
-  .pipe(points);
-
-circleD.outlineStream()
-  .pipe(circleB.clipStream())
-  .pipe(circleC.clipStream())
-  .pipe(points);
-
-circleE.outlineStream()
-  .pipe(circleB.punchStream())
-  .pipe(points);
-
-
-
-
-
-for(var i = 1; i < 30; i+=1){
-
-  circle([200,115 + i*10], 120).outlineStream()
-    .pipe(circleE.clipStream())
-    .pipe(circleB.punchStream())
+  circle([133 - i*10, 145], 160).outlineStream(6)
+    .pipe(overCircle.clipStream())
+    .pipe(circleC.punchStream())
     .pipe(points);
 }
 
-for(var i = 1; i < 50; i+=1){
 
-  circle([100,-100 + i*20], 130).outlineStream()
+circleA.outlineStream(20)
+  .pipe(points);
+
+circleA2.outlineStream(27)
+  .pipe(points);
+
+for(var i = 1; i < 10; i+=1){
+  circle([145, -190 + i*12], 190).outlineStream(12)
     .pipe(circleA.punchStream())
-    .pipe(circleD.punchStream())
     .pipe(points);
 }
 
-for(var i = 1; i < 50; i+=1){
 
-  circle([100, 100 + i*10], 130).outlineStream()
-    .pipe(circleA.clipStream())
-    .pipe(circleB.punchStream())
-    .pipe(points);
-}
+// circleC.outlineStream()
+//   .pipe(circleA.clipStream())
+//   .pipe(circleB.clipStream())
+//   .pipe(points);
+
+// circleB.outlineStream()
+//   .pipe(circleA.clipStream())
+//   .pipe(points);
+
+// circleA.outlineStream()
+//   .pipe(points);
+
+// circleD.outlineStream()
+//   .pipe(circleA.punchStream())
+//   .pipe(points);
+
+// circleD.outlineStream()
+//   .pipe(circleB.clipStream())
+//   .pipe(circleC.clipStream())
+//   .pipe(points);
+
+// circleE.outlineStream()
+//   .pipe(circleB.punchStream())
+//   .pipe(points);
+
+
+
+
+
+// for(var i = 1; i < 30; i+=1){
+
+//   circle([200,115 + i*10], 120).outlineStream()
+//     .pipe(circleE.clipStream())
+//     .pipe(circleB.punchStream())
+//     .pipe(points);
+// }
+
+// for(var i = 1; i < 50; i+=1){
+
+//   circle([100,-100 + i*20], 130).outlineStream()
+//     .pipe(circleA.punchStream())
+//     .pipe(circleD.punchStream())
+//     .pipe(points);
+// }
+
+// for(var i = 1; i < 50; i+=1){
+
+//   circle([290 - i*10, 100], 130).outlineStream(10)
+//     .pipe(circleA.clipStream())
+//     .pipe(circleB.punchStream())
+//     .pipe(circleE.punchStream())
+//     .pipe(points);
+// }
 
 points.on("finish", function(){
   picture.addDots(this.data);
