@@ -3,6 +3,7 @@ var Writable = require('stream').Writable;
 var Transform = require('stream').Transform;
 var util = require('util');
 
+var circle = require("./lib/shapes/circle");
 
 var filterStream = require("./lib/utils/streamHelpers").filterStream;
 var joinStream = require("./lib/utils/streamHelpers").joinStream;
@@ -79,6 +80,14 @@ var c1 = new Counter(12)
   ;
 
 
+var circleA = circle([10,10], 18);
+var circleB = circle([20,10], 18);
+
+circleA.outlineStream()
+  .pipe(circleB.clipStream())
+  .pipe(w)
+
+
 // c.pipe(s).pipe(w);
 // c2.pipe(s2).pipe(w);
 
@@ -95,8 +104,8 @@ var c1 = new Counter(12)
 
 
 
-testFor.pipe(filterStream(function(n){return n%3 === 0;})).pipe(w)
-c2.pipe(filterStream(function(n){return n%3 === 0;})).pipe(w)
+// testFor.pipe(filterStream(function(n){return n%3 === 0;})).pipe(w)
+// c2.pipe(filterStream(function(n){return n%3 === 0;})).pipe(w)
 
 
 // testFor.pipe(threes).pipe(w)
