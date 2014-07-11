@@ -11,6 +11,7 @@ var _ = require("underscore")
   , collectStream = require("./lib/utils/streamHelpers").collectStream
   , eachStream = require("./lib/utils/streamHelpers").eachStream
   , logStream = require("./lib/utils/streamHelpers").logStream
+  , funnelStream = require("./lib/utils/streamHelpers").funnelStream;
   ;
 
 
@@ -25,7 +26,11 @@ function randRange(start, end){
 var rotateAngle = randRange(-100,100);
 var rotateAngle2 = randRange(-100,100);
 
+
+
 var picture = frame(430, 630, 10); // 0 margin
+
+
 
 // var circleA = circle([115,115], 90);
 // var circleA2 = circle([115,115], 100);
@@ -33,7 +38,19 @@ var picture = frame(430, 630, 10); // 0 margin
 // var circleC = circle([60,125], 40);
 // var circleD = circle([130,55], 100);
 // var circleE = circle([200,115], 120);
+var funnel = funnelStream();
 var points = collectStream();
+
+var center = [randRange(100,300), randRange(100,500)]
+
+circle(center, randRange(200,230)).outlineStream(randRange(10, 30)).pipe(points);
+
+circle([randRange(100,300), randRange(100,500)], randRange(100,430)).outlineStream(15).pipe(points);
+
+funnel
+  .pipe(circle(center, randRange(200,230)).clipStream())
+  .pipe(circle([randRange(100,300), randRange(100,500)], randRange(20,300)).punchStream())
+  .pipe(points);
 
 var overCircle = circle([215,200], randRange(100,160));
 var overCircle2 = circle([randRange(165,245),randRange(100,300)], randRange(130,200));
@@ -43,21 +60,21 @@ for(var i = 1; i < randRange(10,100); i+=1){
   var c = circle([215, randRange(-300,100) + i*30 + randRange(-25,25)], randRange(300,310));
 
   var rotate = eachStream(function(dot){
-    return g2d.rotate(dot, rotateAngle, [230, 315]);
+    return g2d.rotate(dot, rotateAngle + i, [230, 315]);
   });
   var rotate2 = eachStream(function(dot){
-    return g2d.rotate(dot, rotateAngle2, [230, 315]);
+    return g2d.rotate(dot, rotateAngle + i*4, [230, 315]);
   });
 
   c.outlineStream(randRange(10,20))
     .pipe(overCircle.clipStream())
     .pipe(rotate)
-    .pipe(points);
+    .pipe(funnel);
 
   c.outlineStream(randRange(4,15))
     .pipe(overCircle2.punchStream())
     .pipe(rotate2)
-    .pipe(points);
+    .pipe(funnel);
 }
 
 
