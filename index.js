@@ -32,138 +32,124 @@ var picture = frame(430, 630, 10); // 0 margin
 
 
 
-// var circleA = circle([115,115], 90);
-// var circleA2 = circle([115,115], 100);
-// var circleB = circle([100,120], 60);
-// var circleC = circle([60,125], 40);
-// var circleD = circle([130,55], 100);
-// var circleE = circle([200,115], 120);
 var funnel = funnelStream();
 var points = collectStream();
+var centerX = randRange(200,230);
+var centerY = randRange(200,400);
 
-var center = [randRange(100,300), randRange(100,500)]
+var interval = randRange(10,40)
 
-circle(center, randRange(200,230)).outlineStream(randRange(10, 30)).pipe(points);
 
-circle([randRange(100,300), randRange(100,500)], randRange(100,430)).outlineStream(15).pipe(points);
+for(var i = 1; i < 40; i+=1){
 
-funnel
-  .pipe(circle(center, randRange(200,230)).clipStream())
-  .pipe(circle([randRange(100,300), randRange(100,500)], randRange(20,300)).punchStream())
-  .pipe(points);
-
-var overCircle = circle([215,200], randRange(100,160));
-var overCircle2 = circle([randRange(165,245),randRange(100,300)], randRange(130,200));
-
-for(var i = 1; i < randRange(10,100); i+=1){
-
-  var c = circle([215, randRange(-300,100) + i*30 + randRange(-25,25)], randRange(300,310));
+  var centerPoint = [centerX+randRange(-5,5), centerY+randRange(-5,5)];
+  var angle = randRange(-10,10);
 
   var rotate = eachStream(function(dot){
-    return g2d.rotate(dot, rotateAngle + i, [230, 315]);
-  });
-  var rotate2 = eachStream(function(dot){
-    return g2d.rotate(dot, rotateAngle + i*4, [230, 315]);
+    return g2d.rotate(dot, angle, centerPoint);
   });
 
-  c.outlineStream(randRange(10,20))
-    .pipe(overCircle.clipStream())
-    .pipe(rotate)
-    .pipe(funnel);
+  circle(centerPoint, i*interval + randRange(-interval/2,interval/2)).outlineStream(randRange(5,25))
+    // .pipe(rotate)
+    .pipe(funnel)
+    ;
 
-  c.outlineStream(randRange(4,15))
-    .pipe(overCircle2.punchStream())
-    .pipe(rotate2)
-    .pipe(funnel);
 }
 
+// Making a target
 
-// circleA.outlineStream(20)
+var concentricCenter = [randRange(0,400),randRange(0,600)];
+var radius = randRange(200,400);
+var interval = randRange(10,40);
+var outerCircle = circle(concentricCenter,radius);
+
+var misbehave = randRange(10) * 2;
+
+funnel
+  .pipe(outerCircle.punchStream())
+  .pipe(points)
+
+outerCircle.outlineStream(interval)
+  .pipe(points)
+
+for(var i = 1; i < randRange(2,7); i+=1){
+
+  var currentCenter = [
+                      concentricCenter[0]+randRange(-misbehave,misbehave), 
+                      concentricCenter[1]+randRange(-misbehave,misbehave)
+                      ];
+
+  radius = radius * 0.8;
+  var clipCircle = circle(currentCenter, radius);
+
+  radius = radius * 0.8;
+  var punchCircle = circle(currentCenter, radius);
+
+  funnel
+    .pipe(clipCircle.clipStream())
+    .pipe(punchCircle.punchStream())
+    .pipe(points)
+
+  clipCircle.outlineStream(randRange(10,40))
+    .pipe(points)
+
+  punchCircle.outlineStream(randRange(10,40))
+    .pipe(points)
+
+}
+
+var innerCircle = circle(concentricCenter,radius*.8);
+
+funnel
+  .pipe(innerCircle.clipStream())
+  .pipe(points)
+
+innerCircle.outlineStream(interval)
+  .pipe(points)
+
+//  end target
+
+
+
+
+
+// circle(center, randRange(200,230)).outlineStream(randRange(10, 30)).pipe(points);
+
+// circle([randRange(100,300), randRange(100,500)], randRange(100,430)).outlineStream(15).pipe(points);
+
+// funnel
+//   .pipe(circle(center, randRange(200,230)).clipStream())
+//   .pipe(circle([randRange(100,300), randRange(100,500)], randRange(20,300)).punchStream())
 //   .pipe(points);
 
-// circleA2.outlineStream(27)
-//   .pipe(points);
+// var overCircle = circle([215,200], randRange(100,160));
+// var overCircle2 = circle([randRange(165,245),randRange(100,300)], randRange(130,200));
 
-// for(var i = 1; i < 10; i+=1){
-//   circle([145, -190 + i*12], 190).outlineStream(12)
-//     .pipe(circleA.punchStream())
-//     .pipe(points);
+// for(var i = 1; i < randRange(10,100); i+=1){
+
+//   var c = circle([215, randRange(-300,100) + i*30 + randRange(-25,25)], randRange(300,310));
+
+//   var rotate = eachStream(function(dot){
+//     return g2d.rotate(dot, rotateAngle + i, [230, 315]);
+//   });
+//   var rotate2 = eachStream(function(dot){
+//     return g2d.rotate(dot, rotateAngle + i*4, [230, 315]);
+//   });
+
+//   c.outlineStream(randRange(10,20))
+//     .pipe(overCircle.clipStream())
+//     .pipe(rotate)
+//     .pipe(funnel);
+
+//   c.outlineStream(randRange(4,15))
+//     .pipe(overCircle2.punchStream())
+//     .pipe(rotate2)
+//     .pipe(funnel);
 // }
 
-
-// circleC.outlineStream()
-//   .pipe(circleA.clipStream())
-//   .pipe(circleB.clipStream())
-//   .pipe(points);
-
-// circleB.outlineStream()
-//   .pipe(circleA.clipStream())
-//   .pipe(points);
-
-// circleA.outlineStream()
-//   .pipe(points);
-
-// circleD.outlineStream()
-//   .pipe(circleA.punchStream())
-//   .pipe(points);
-
-// circleD.outlineStream()
-//   .pipe(circleB.clipStream())
-//   .pipe(circleC.clipStream())
-//   .pipe(points);
-
-// circleE.outlineStream()
-//   .pipe(circleB.punchStream())
-//   .pipe(points);
-
-
-
-
-
-// for(var i = 1; i < 30; i+=1){
-
-//   circle([200,115 + i*10], 120).outlineStream()
-//     .pipe(circleE.clipStream())
-//     .pipe(circleB.punchStream())
-//     .pipe(points);
-// }
-
-// for(var i = 1; i < 50; i+=1){
-
-//   circle([100,-100 + i*20], 130).outlineStream()
-//     .pipe(circleA.punchStream())
-//     .pipe(circleD.punchStream())
-//     .pipe(points);
-// }
-
-// for(var i = 1; i < 50; i+=1){
-
-//   circle([290 - i*10, 100], 130).outlineStream(10)
-//     .pipe(circleA.clipStream())
-//     .pipe(circleB.punchStream())
-//     .pipe(circleE.punchStream())
-//     .pipe(points);
-// }
 
 points.on("finish", function(){
   picture.addDots(this.data);
   // picture.preview();
   picture.export(outputDir);
 });
-
-
-
-// shape.circle([50,50],10).outline(10, function(dot){
-//   picture.addDot(dot);
-// });
-
-// shape.circle([150,150],100).outline(20, function(dot){
-//   picture.addDot(dot);
-// });
-
-// shape.circle([250,250],100).outline(20, function(dot){
-//   picture.addDot(dot);
-// });
-
-// picture.preview();
-// picture.export(outputDir);
