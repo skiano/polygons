@@ -45,13 +45,13 @@ circle(wiggleCenter(6), randRange(200,230))
 
 // Interferance
 
-circle([
-    randRange(-picture.width,  picture.width*2), 
-    randRange(-picture.height, picture.height*2)], 
-    randRange(150,430)
-  )
-  .outlineStream(randRange(15,40))
-  .pipe(points);
+// circle([
+//     randRange(-picture.width,  picture.width*2), 
+//     randRange(-picture.height, picture.height*2)], 
+//     randRange(150,430)
+//   )
+//   .outlineStream(randRange(15,40))
+//   .pipe(points);
 
 // Circle Body
 
@@ -62,11 +62,12 @@ funnel
 
 var overCircle = circle(wiggleCenter(20), randRange(100,160));
 var overCircle2 = circle(wiggleCenter(20), randRange(130,200));
+var growth = randRange(20,60);
 
 for(var i = 1; i < randRange(10,100); i+=1){
 
   var c = circle(
-            [315, randRange(-300,100) + i*30 + randRange(-25,25)], 
+            [315, randRange(-300,100) + i*growth + randRange(-growth,growth)], 
             randRange(200,340)
             );
 
