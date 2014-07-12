@@ -109,9 +109,9 @@ innerCircle.outlineStream(interval)
   .pipe(points)
 
 
-var detail = randRange(20,100);
-var amplify = randRange(10, 200);
-
+var detail = randRange(50,100);
+var amplify = randRange(60, 400);
+var start = randRange(-100,100)
 points
   // .pipe(eachStream(function(dot){
 
@@ -127,7 +127,7 @@ points
   //   return([dot[0]*1.3, dot[1]*.6])
   // }))
   .pipe(eachStream(function(dot){
-    var shift = Math.sin(dot[1]/detail)*amplify;
+    var shift = Math.sin((dot[1]+start)/detail)*amplify;
     return([dot[0]+shift, dot[1]])
   }))
   .pipe(finalPoints)
