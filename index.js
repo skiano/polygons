@@ -33,7 +33,8 @@ var picture = frame(430, 630, 10); // 0 margin
 
 
 var funnel = funnelStream();
-var points = collectStream();
+var points = funnelStream();
+var finalPoints = collectStream();
 var centerX = randRange(200,230);
 var centerY = randRange(200,400);
 
@@ -107,9 +108,29 @@ funnel
 innerCircle.outlineStream(interval)
   .pipe(points)
 
-//  end target
 
+var detail = randRange(20,100);
+var amplify = randRange(10, 200);
 
+points
+  // .pipe(eachStream(function(dot){
+
+  //   // var squashX = Math.floor(Math.sqrt(dot[0]));
+  //   // var squashY = Math.floor(Math.sqrt(dot[1]));
+  //   var squashX = 2;
+  //   var squashY = 3;
+
+  //   return([ Math.floor(dot[0]) - Math.floor(dot[0]) % squashX , Math.ceil(dot[1]) - Math.ceil(dot[1]) % squashY])
+  // }))
+  // // .pipe(circle([200,200],200).clipStream())
+  // .pipe(eachStream(function(dot){
+  //   return([dot[0]*1.3, dot[1]*.6])
+  // }))
+  .pipe(eachStream(function(dot){
+    var shift = Math.sin(dot[1]/detail)*amplify;
+    return([dot[0]+shift, dot[1]])
+  }))
+  .pipe(finalPoints)
 
 
 
@@ -148,7 +169,7 @@ innerCircle.outlineStream(interval)
 // }
 
 
-points.on("finish", function(){
+finalPoints.on("finish", function(){
   picture.addDots(this.data);
   // picture.preview();
   picture.export(outputDir);
