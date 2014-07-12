@@ -4,7 +4,7 @@ var _ = require("underscore")
   , output = require("./lib/utils/outputSVG")
   , convert = require("./lib/utils/convertImage")
   , path = require("path")
-  , outputDir = path.join(__dirname, "output", "day-2")
+  , outputDir = path.join(__dirname, "output", "day-3")
   , g2d = require("./lib/utils/2dHelpers")
   , frame = require("./lib/frame")
   , circle = require("./lib/shapes/circle")
@@ -14,7 +14,6 @@ var _ = require("underscore")
   , funnelStream = require("./lib/utils/streamHelpers").funnelStream;
   ;
 
-
 function randRange(start, end){
   if(!end){
     end = start
@@ -23,47 +22,56 @@ function randRange(start, end){
   return Math.floor(Math.random()*(end-start)) + start;
 }
 
-var rotateAngle = randRange(-100,100);
-var rotateAngle2 = randRange(-100,100);
-
-
-
-var picture = frame(430, 630, 10); // 0 margin
-
-
-
-// var circleA = circle([115,115], 90);
-// var circleA2 = circle([115,115], 100);
-// var circleB = circle([100,120], 60);
-// var circleC = circle([60,125], 40);
-// var circleD = circle([130,55], 100);
-// var circleE = circle([200,115], 120);
+var picture = frame(630, 630, 10); // 0 margin
 var funnel = funnelStream();
 var points = collectStream();
 
-var center = [randRange(100,300), randRange(100,500)]
+var center = [picture.width/2, picture.height/2];
+var rotateAngle = randRange(-40,40);
+var rotateAngle2 = randRange(-40,40);
 
-circle(center, randRange(200,230)).outlineStream(randRange(10, 30)).pipe(points);
+function wiggleCenter(amount){
+  return [
+    center[0] + randRange(-amount,amount),
+    center[1] + randRange(-amount,amount)
+  ]
+}
 
-circle([randRange(100,300), randRange(100,500)], randRange(100,430)).outlineStream(15).pipe(points);
+// Base Circle
+
+circle(wiggleCenter(6), randRange(200,230))
+  .outlineStream(randRange(3, 60))
+  .pipe(points);
+
+// Interferance
+
+circle([
+    randRange(-picture.width,  picture.width*2), 
+    randRange(-picture.height, picture.height*2)], 
+    randRange(150,430)
+  )
+  .outlineStream(randRange(15,40))
+  .pipe(points);
+
+// Circle Body
 
 funnel
   .pipe(circle(center, randRange(200,230)).clipStream())
-  .pipe(circle([randRange(100,300), randRange(100,500)], randRange(20,300)).punchStream())
+  .pipe(circle([randRange(100,500), randRange(100,500)], randRange(20,300)).punchStream())
   .pipe(points);
 
-var overCircle = circle([215,200], randRange(100,160));
-var overCircle2 = circle([randRange(165,245),randRange(100,300)], randRange(130,200));
+var overCircle = circle(wiggleCenter(20), randRange(100,160));
+var overCircle2 = circle(wiggleCenter(20), randRange(130,200));
 
 for(var i = 1; i < randRange(10,100); i+=1){
 
-  var c = circle([215, randRange(-300,100) + i*30 + randRange(-25,25)], randRange(300,310));
+  var c = circle(
+            [315, randRange(-300,100) + i*30 + randRange(-25,25)], 
+            randRange(200,340)
+            );
 
   var rotate = eachStream(function(dot){
     return g2d.rotate(dot, rotateAngle + i, [230, 315]);
-  });
-  var rotate2 = eachStream(function(dot){
-    return g2d.rotate(dot, rotateAngle + i*4, [230, 315]);
   });
 
   c.outlineStream(randRange(10,20))
@@ -71,99 +79,17 @@ for(var i = 1; i < randRange(10,100); i+=1){
     .pipe(rotate)
     .pipe(funnel);
 
+  var rotate2 = eachStream(function(dot){
+    return g2d.rotate(dot, rotateAngle + i*4, [230, 315]);
+  });
+
   c.outlineStream(randRange(4,15))
     .pipe(overCircle2.punchStream())
     .pipe(rotate2)
     .pipe(funnel);
 }
 
-
-// circleA.outlineStream(20)
-//   .pipe(points);
-
-// circleA2.outlineStream(27)
-//   .pipe(points);
-
-// for(var i = 1; i < 10; i+=1){
-//   circle([145, -190 + i*12], 190).outlineStream(12)
-//     .pipe(circleA.punchStream())
-//     .pipe(points);
-// }
-
-
-// circleC.outlineStream()
-//   .pipe(circleA.clipStream())
-//   .pipe(circleB.clipStream())
-//   .pipe(points);
-
-// circleB.outlineStream()
-//   .pipe(circleA.clipStream())
-//   .pipe(points);
-
-// circleA.outlineStream()
-//   .pipe(points);
-
-// circleD.outlineStream()
-//   .pipe(circleA.punchStream())
-//   .pipe(points);
-
-// circleD.outlineStream()
-//   .pipe(circleB.clipStream())
-//   .pipe(circleC.clipStream())
-//   .pipe(points);
-
-// circleE.outlineStream()
-//   .pipe(circleB.punchStream())
-//   .pipe(points);
-
-
-
-
-
-// for(var i = 1; i < 30; i+=1){
-
-//   circle([200,115 + i*10], 120).outlineStream()
-//     .pipe(circleE.clipStream())
-//     .pipe(circleB.punchStream())
-//     .pipe(points);
-// }
-
-// for(var i = 1; i < 50; i+=1){
-
-//   circle([100,-100 + i*20], 130).outlineStream()
-//     .pipe(circleA.punchStream())
-//     .pipe(circleD.punchStream())
-//     .pipe(points);
-// }
-
-// for(var i = 1; i < 50; i+=1){
-
-//   circle([290 - i*10, 100], 130).outlineStream(10)
-//     .pipe(circleA.clipStream())
-//     .pipe(circleB.punchStream())
-//     .pipe(circleE.punchStream())
-//     .pipe(points);
-// }
-
 points.on("finish", function(){
   picture.addDots(this.data);
-  // picture.preview();
   picture.export(outputDir);
 });
-
-
-
-// shape.circle([50,50],10).outline(10, function(dot){
-//   picture.addDot(dot);
-// });
-
-// shape.circle([150,150],100).outline(20, function(dot){
-//   picture.addDot(dot);
-// });
-
-// shape.circle([250,250],100).outline(20, function(dot){
-//   picture.addDot(dot);
-// });
-
-// picture.preview();
-// picture.export(outputDir);
