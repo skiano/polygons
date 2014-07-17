@@ -29,8 +29,17 @@ describe("Triangle", function(){
       t1.contains(p).should.be.false;
     });
 
-    // t1.contains(outsidePoints[0]);
+  });
 
+  it("should find the centeroid", function(){
+    var t1 = makeTriangle([160,190], [210,90], [70,70])
+      , expected = [ 146.66666666666666, 116.66666666666666 ]
+      , errX = Math.abs(t1.centroid[0] - expected[0])
+      , errY = Math.abs(t1.centroid[1] - expected[1])
+      ;
+
+    errX.should.be.lessThan(0.01);
+    errY.should.be.lessThan(0.01);
   });
 
 });
