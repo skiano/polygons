@@ -29,7 +29,7 @@ describe("Triangle", function(){
       t1.contains(p).should.be.false;
     });
 
-    console.log(t1);
+    // t1.contains(outsidePoints[0]);
 
   });
 
