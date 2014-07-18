@@ -4,10 +4,11 @@ var _ = require("underscore")
   , output = require("./lib/utils/outputSVG")
   , convert = require("./lib/utils/convertImage")
   , path = require("path")
-  , outputDir = path.join(__dirname, "output", "day-2")
+  , outputDir = path.join(__dirname, "output", "day-4")
   , g2d = require("./lib/utils/2dHelpers")
   , frame = require("./lib/frame")
   , circle = require("./lib/shapes/circle")
+  , triangle = require("./lib/shapes/triangle")
   , collectStream = require("./lib/utils/streamHelpers").collectStream
   , eachStream = require("./lib/utils/streamHelpers").eachStream
   , logStream = require("./lib/utils/streamHelpers").logStream
@@ -28,7 +29,7 @@ var rotateAngle2 = randRange(-100,100);
 
 
 
-var picture = frame(430, 630, 10); // 0 margin
+var picture = frame(600, 600, 10); // 0 margin
 
 
 
@@ -117,66 +118,27 @@ var detailY = randRange(50,100);
 var amplifyY = randRange(60, 200);
 var startY = randRange(-100,100);
 
+var t1 = triangle(
+          [0,picture.height-10],
+          [picture.width,picture.height-10],
+          [picture.width/2,10]
+         );
+
 points
   // .pipe(eachStream(function(dot){
-
-  //   // var squashX = Math.floor(Math.sqrt(dot[0]));
-  //   // var squashY = Math.floor(Math.sqrt(dot[1]));
-  //   var squashX = 2;
-  //   var squashY = 3;
-
+  //   var squashX = 20;
+  //   var squashY = 20;
   //   return([ Math.floor(dot[0]) - Math.floor(dot[0]) % squashX , Math.ceil(dot[1]) - Math.ceil(dot[1]) % squashY])
   // }))
-  // // .pipe(circle([200,200],200).clipStream())
-  // .pipe(eachStream(function(dot){
-  //   return([dot[0]*1.3, dot[1]*.6])
-  // }))
   .pipe(eachStream(function(dot){
-    var shiftY = -Math.sin((dot[0]+start)/detail)*amplify;
     var shiftX = Math.sin((dot[1]+start)/detail)*amplify;
-    return([dot[0]+shiftX, dot[1]+shiftY])
+    return([dot[0]+shiftX, dot[1]])
   }))
+  .pipe(t1.punchStream())
   .pipe(finalPoints)
-
-
-
-// circle(center, randRange(200,230)).outlineStream(randRange(10, 30)).pipe(points);
-
-// circle([randRange(100,300), randRange(100,500)], randRange(100,430)).outlineStream(15).pipe(points);
-
-// funnel
-//   .pipe(circle(center, randRange(200,230)).clipStream())
-//   .pipe(circle([randRange(100,300), randRange(100,500)], randRange(20,300)).punchStream())
-//   .pipe(points);
-
-// var overCircle = circle([215,200], randRange(100,160));
-// var overCircle2 = circle([randRange(165,245),randRange(100,300)], randRange(130,200));
-
-// for(var i = 1; i < randRange(10,100); i+=1){
-
-//   var c = circle([215, randRange(-300,100) + i*30 + randRange(-25,25)], randRange(300,310));
-
-//   var rotate = eachStream(function(dot){
-//     return g2d.rotate(dot, rotateAngle + i, [230, 315]);
-//   });
-//   var rotate2 = eachStream(function(dot){
-//     return g2d.rotate(dot, rotateAngle + i*4, [230, 315]);
-//   });
-
-//   c.outlineStream(randRange(10,20))
-//     .pipe(overCircle.clipStream())
-//     .pipe(rotate)
-//     .pipe(funnel);
-
-//   c.outlineStream(randRange(4,15))
-//     .pipe(overCircle2.punchStream())
-//     .pipe(rotate2)
-//     .pipe(funnel);
-// }
-
 
 finalPoints.on("finish", function(){
   picture.addDots(this.data);
-  // picture.preview();
   picture.export(outputDir);
 });
+
